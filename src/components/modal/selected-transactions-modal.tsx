@@ -18,6 +18,8 @@ import {
 import type { MempoolTransaction } from '@/types/index';
 import { selectedTransactionColumns } from '@/features/overview/components/transaction-columns';
 import { TransactionSummaryModal } from './transaction-summary-modal';
+import { useJobDeclarationActions } from '@/contexts/JobDeclarationContext';
+import { Send } from 'lucide-react';
 
 interface SelectedTransactionsModalProps {
   isOpen: boolean;
@@ -36,6 +38,21 @@ export function SelectedTransactionsModal({
   const [pageSize, setPageSize] = React.useState(10);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [isSummaryModalOpen, setIsSummaryModalOpen] = React.useState(false);
+  const {
+    declareJob,
+    isLoading: isDeclaring,
+    currentTemplateId
+  } = useJobDeclarationActions();
+
+  const handleDeclareJob = async () => {
+    const txids = selectedData.map((tx) => tx.txid);
+    const success = await declareJob(txids);
+
+    if (success) {
+      parentTable.toggleAllRowsSelected(false);
+      setTimeout(() => handleModal(false), 1000);
+    }
+  };
 
   const customizedColumns = React.useMemo<ColumnDef<MempoolTransaction>[]>(
     () =>
@@ -98,11 +115,20 @@ export function SelectedTransactionsModal({
             {selectedData.length > 0 && (
               <>
                 <Button
+                  variant={!currentTemplateId ? 'secondary' : 'default'}
+                  size='sm'
+                  onClick={handleDeclareJob}
+                  disabled={!currentTemplateId || isDeclaring}
+                >
+                  <Send className='h-4 w-4' />
+                  {isDeclaring ? 'Declaring...' : 'Declare Job'}
+                </Button>
+                <Button
                   variant='outline'
                   size='sm'
                   onClick={() => setIsSummaryModalOpen(true)}
                 >
-                  View Summary
+                  Summary
                 </Button>
                 <Button
                   variant='destructive'

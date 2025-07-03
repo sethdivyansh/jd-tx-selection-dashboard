@@ -111,26 +111,16 @@ export function useMempoolTransactions() {
           setPausedTx((prev) =>
             prev.filter((t) => t.txid !== removeEvent.txid)
           );
-          toast.success(`Transaction Removed`, {
-            description: `${removeEvent.txid.slice(0, 12)}... was removed from mempool`,
-            action: {
-              label: 'View TX',
-              onClick: () =>
-                window.open(
-                  `https://mempool.space/tx/${removeEvent.txid}`,
-                  '_blank'
-                )
-            }
-          });
           break;
 
         case 'C': // Block Connect
           const connectEvent = event as BlockConnectEvent;
-          const shortHash = connectEvent.block.block_hash.slice(0, 8) + '...';
+          const shortHash = connectEvent.block.block_hash.slice(0, 10) + '...';
+          const blockHeight = connectEvent.block.height;
           const confirmedCount = connectEvent.block.txids.length - 1; // Subtract coinbase tx
 
-          toast.success(`⛏️ Block Mined`, {
-            description: `Block ${shortHash} confirmed ${confirmedCount} transactions`,
+          toast.success(`Block #${blockHeight} Mined`, {
+            description: `${confirmedCount} transactions confirmed in block ${shortHash}`,
             action: {
               label: 'View Block',
               onClick: () =>

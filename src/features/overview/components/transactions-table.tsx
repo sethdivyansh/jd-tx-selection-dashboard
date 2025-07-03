@@ -15,9 +15,10 @@ import { transactionColumns } from './transaction-columns';
 import { SelectedTransactionsModal } from '../../../components/modal/selected-transactions-modal';
 import React from 'react';
 import { TransactionSummaryModal } from '@/components/modal/transaction-summary-modal';
-import { Download, Eye, BarChart3, Copy } from 'lucide-react';
+import { Download, Eye, BarChart3, Copy, Send } from 'lucide-react';
 import { toast } from 'sonner';
 import { copyTransactionIds, exportTransactionsToCSV } from '@/lib/utils';
+import { useJobDeclarationActions } from '@/contexts/JobDeclarationContext';
 
 interface Props {
   data: MempoolTransaction[];
@@ -30,6 +31,11 @@ export function TransactionsTable({ data, isFetching, onToggle }: Props) {
   const [isSummaryModalOpen, setIsSummaryModalOpen] = React.useState(false);
   const [isExporting, setIsExporting] = React.useState(false);
   const [isCopying, setIsCopying] = React.useState(false);
+  const {
+    declareJob,
+    isLoading: isDeclaring,
+    currentTemplateId
+  } = useJobDeclarationActions();
 
   const { table } = useDataTable<MempoolTransaction>({
     data,
@@ -79,9 +85,30 @@ export function TransactionsTable({ data, isFetching, onToggle }: Props) {
     }
   };
 
+  const handleDeclareJob = async () => {
+    const txids = selectedData.map((tx) => tx.txid);
+    const success = await declareJob(txids);
+
+    if (success) {
+      table.toggleAllRowsSelected(false);
+    }
+  };
+
   const actionBar = (
     <DataTableActionBar table={table} className='rounded-xl p-4'>
       <DataTableActionBarSelection table={table} />
+      <DataTableActionBarAction
+        tooltip={
+          currentTemplateId
+            ? `Declare job with selected transactions (Template ID: ${currentTemplateId})`
+            : 'Wait for template notification to declare job'
+        }
+        onClick={handleDeclareJob}
+        isPending={isDeclaring}
+      >
+        <Send />
+        Declare Job
+      </DataTableActionBarAction>
       <DataTableActionBarAction
         tooltip='View selected transactions'
         onClick={() => handleSelectedModal(true)}

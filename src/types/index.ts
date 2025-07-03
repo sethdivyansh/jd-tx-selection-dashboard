@@ -78,6 +78,7 @@ export interface BlockConnectEvent extends SequenceEvent {
   event: 'C';
   block: {
     block_hash: string;
+    height: number;
     txids: string[];
   };
 }
@@ -125,4 +126,40 @@ export interface AggregateStats {
 export interface SystemStats {
   cpu_usage: number; // in Percentage
   memory_usage: string;
+}
+
+// New Template Notification types for WebSocket
+export interface NewTemplateNotification {
+  event: string;
+  message: string;
+  template_id: number | -1; // -1 indicates no template available
+  timestamp: number;
+}
+
+export interface JobDeclarationRequest {
+  template_id: number;
+  txids: string[];
+}
+
+export interface JobDeclarationData {
+  template_id?: number;
+  rejected_tx?: string[];
+  channel_id?: number;
+  req_id?: number;
+  job_id?: number;
+  mining_job_token?: string;
+}
+
+export interface APIResponse<T> {
+  success: boolean;
+  message?: string;
+  data?: T | null;
+}
+
+// Log entry type for the logs component
+export interface LogEntry {
+  event: string;
+  timestamp: string;
+  level: 'INFO' | 'DEBUG' | 'WARNING' | 'ERROR';
+  message: string;
 }

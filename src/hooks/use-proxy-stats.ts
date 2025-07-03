@@ -8,7 +8,7 @@ import {
   getAggregateStats,
   getSystemStats,
   type ApiResponse
-} from '@/api/proxy-api';
+} from '@/app/api/proxy-api';
 
 function useApiPolling<T>(
   fetchFn: (signal: AbortSignal) => Promise<ApiResponse<T>>,
@@ -55,15 +55,15 @@ function useApiPolling<T>(
   return { data, loading, error };
 }
 
-export function useHealth(intervalMs: number = 2000) {
+export function useHealth(intervalMs: number = 4000) {
   return useApiPolling(getHealth, intervalMs, 'Failed to fetch health');
 }
 
-export function usePoolInfo(intervalMs: number = 2000) {
+export function usePoolInfo(intervalMs: number = 4000) {
   return useApiPolling(getPoolInfo, intervalMs, 'Failed to fetch pool info');
 }
 
-export function useMinerStats(intervalMs: number = 2000) {
+export function useMinerStats(intervalMs: number = 4000) {
   return useApiPolling(
     getMinerStats,
     intervalMs,
@@ -71,7 +71,7 @@ export function useMinerStats(intervalMs: number = 2000) {
   );
 }
 
-export function useAggregateStats(intervalMs: number = 2000) {
+export function useAggregateStats(intervalMs: number = 4000) {
   return useApiPolling(
     getAggregateStats,
     intervalMs,
@@ -79,7 +79,7 @@ export function useAggregateStats(intervalMs: number = 2000) {
   );
 }
 
-export function useSystemStats(intervalMs: number = 2000) {
+export function useSystemStats(intervalMs: number = 4000) {
   return useApiPolling(
     getSystemStats,
     intervalMs,

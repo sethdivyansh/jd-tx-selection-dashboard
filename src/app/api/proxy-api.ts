@@ -5,7 +5,7 @@ import type {
   MinerStatsMap,
   AggregateStats,
   SystemStats
-} from '../types/index';
+} from '../../types/index';
 import { formatBytes } from '@/lib/utils';
 
 export interface ApiResponse<T> {
