@@ -181,3 +181,9 @@ export async function copyTransactionIds(
 
   await navigator.clipboard.writeText(txids);
 }
+
+export async function copyTxidsList(txids: string[]): Promise<void> {
+  const txidString = txids.join('\n');
+  if (!navigator.clipboard) throw new Error('Clipboard API not available');
+  await navigator.clipboard.writeText(txidString);
+}

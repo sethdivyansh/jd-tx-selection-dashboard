@@ -3,11 +3,11 @@ export interface NavItem {
   url: string;
   disabled?: boolean;
   external?: boolean;
-  shortcut?: [string, string];
   label?: string;
   description?: string;
   isActive?: boolean;
   items?: NavItem[];
+  icon?: React.ComponentType<any>;
 }
 
 export interface NavItemWithChildren extends NavItem {

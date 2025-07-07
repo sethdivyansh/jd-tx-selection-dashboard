@@ -76,7 +76,7 @@ const columnsConfig: ColumnConfig[] = [
     enableSorting: true,
     enableColumnFilter: true,
     filterFn: (row: Row<MempoolTransaction>, id: string, value: number) =>
-      row.getValue<any[]>(id).length === value
+      row.getValue<any[]>(id).length === Number(value)
   },
   {
     id: 'descendant_count',
