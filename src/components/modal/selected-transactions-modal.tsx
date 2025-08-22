@@ -5,20 +5,12 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { DataTable } from '@/components/ui/table/data-table';
 import { DataTableToolbar } from '@/components/ui/table/data-table-toolbar';
 import { DataTableSortList } from '@/components/ui/table/data-table-sort-list';
-import {
-  useReactTable,
-  getCoreRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  SortingState,
-  ColumnDef,
-  Row,
-  Table as ReactTable
-} from '@tanstack/react-table';
+import { ColumnDef, Row, Table as ReactTable } from '@tanstack/react-table';
 import type { MempoolTransaction } from '@/types/index';
 import { selectedTransactionColumns } from '@/features/overview/components/transaction-columns';
 import { TransactionSummaryModal } from './transaction-summary-modal';
 import { useJobDeclarationActions } from '@/contexts/JobDeclarationContext';
+import { useDataTable } from '@/hooks/use-data-table';
 import { Send } from 'lucide-react';
 
 interface SelectedTransactionsModalProps {
@@ -34,9 +26,6 @@ export function SelectedTransactionsModal({
   parentTable,
   handleModal
 }: SelectedTransactionsModalProps) {
-  const [pageIndex, setPageIndex] = React.useState(0);
-  const [pageSize, setPageSize] = React.useState(10);
-  const [sorting, setSorting] = React.useState<SortingState>([]);
   const [isSummaryModalOpen, setIsSummaryModalOpen] = React.useState(false);
   const {
     declareJob,
@@ -60,15 +49,28 @@ export function SelectedTransactionsModal({
         if (col.id === 'select') {
           return {
             ...col,
-            cell: ({ row }: { row: Row<MempoolTransaction> }) => (
-              <Checkbox
-                checked={parentTable.getRow(row.original.txid)?.getIsSelected()}
-                onCheckedChange={(value) =>
-                  parentTable.getRow(row.original.txid)?.toggleSelected(!!value)
+            cell: ({ row }: { row: Row<MempoolTransaction> }) => {
+              const getParentRow = () => {
+                try {
+                  return parentTable.getRow(row.original.txid);
+                } catch {
+                  return null;
                 }
-                aria-label='Select row'
-              />
-            )
+              };
+
+              return (
+                <Checkbox
+                  checked={getParentRow()?.getIsSelected() ?? false}
+                  onCheckedChange={(value) => {
+                    const parentRow = getParentRow();
+                    if (parentRow) {
+                      parentRow.toggleSelected(!!value);
+                    }
+                  }}
+                  aria-label='Select row'
+                />
+              );
+            }
           } as ColumnDef<MempoolTransaction>;
         }
         return col;
@@ -76,27 +78,10 @@ export function SelectedTransactionsModal({
     [parentTable]
   );
 
-  const table = useReactTable({
+  const { table } = useDataTable<MempoolTransaction>({
     data: selectedData,
-    columns: customizedColumns,
-    state: {
-      pagination: { pageIndex, pageSize },
-      sorting
-    },
-    onPaginationChange: (updater) => {
-      if (typeof updater === 'function') {
-        const next = updater({ pageIndex, pageSize });
-        setPageIndex(next.pageIndex);
-        setPageSize(next.pageSize);
-      } else {
-        setPageIndex(updater.pageIndex);
-        setPageSize(updater.pageSize);
-      }
-    },
-    onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel()
+    columns: customizedColumns as any,
+    getRowId: (r) => r.txid
   });
 
   return (

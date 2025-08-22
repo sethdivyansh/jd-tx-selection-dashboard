@@ -4,7 +4,9 @@ import type {
   PoolInfo,
   MinerStatsMap,
   AggregateStats,
-  SystemStats
+  SystemStats,
+  ApiSettings,
+  ApiSettingsUpdate
 } from '../../types/index';
 import { formatBytes } from '@/lib/utils';
 
@@ -113,5 +115,25 @@ export const getSystemStats = async (
             memory_usage: formatBytes(data['memory_usage_bytes'])
           }
         : null
+  );
+};
+
+// Settings API functions
+export const getSettings = async (
+  signal?: AbortSignal
+): Promise<ApiResponse<ApiSettings>> => {
+  return apiCall(
+    () => proxyApi.get('/api/settings', { signal }),
+    (data) => data
+  );
+};
+
+export const updateSettings = async (
+  settings: ApiSettingsUpdate,
+  signal?: AbortSignal
+): Promise<ApiResponse<ApiSettings>> => {
+  return apiCall(
+    () => proxyApi.post('/api/settings', settings, { signal }),
+    (data) => data
   );
 };

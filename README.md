@@ -32,6 +32,10 @@ By shifting transaction control from the pool to individual miners, this dashboa
 
 - **Real-time Mempool Feed**: Live updates via WebSocket for pending transactions
 - **Transaction Selection**: Manual multi-select and automated filters (fee rate, size, profitability)
+- **Bitcoin Mining Validation**: Real-time validation of transaction selection against Bitcoin mining criteria
+  - Validates dependency chains (parent-child relationships)
+  - Ensures block size limits compliance
+  - Visual indicators for invalid selections with detailed error messages
 - **Job Declaration**: Direct Stratum V2 submission and status tracking
 - **Floating Action Bar**: Contextual bulk actions (submit, copy IDs, export CSV)
 - **Analytics**: Charts and stats for selection efficiency and estimated rewards
@@ -41,20 +45,20 @@ By shifting transaction control from the pool to individual miners, this dashboa
 
 ## Tech Stack
 
-| Category           | Technology                           |
-| ------------------ | ------------------------------------ |
-| Framework          | Next.js 15 (App Router)              |
-| Language           | TypeScript                           |
-| Styling            | Tailwind CSS v4                      |
-| Components         | Shadcn UI                            |
-| Table Library      | TanStack Table                       |
-| State Management   | Zustand                              |
-| WebSocket Client   | Reconnecting WebSocket               |
-| URL State Routing  | Nuqs                                 |
-| Animations         | Motion                               |
-| Forms & Validation | Zod                                  |
-| Icons              | Lucide React, Tabler Icons           |
-| Lint & Format      | ESLint, Prettier |
+| Category           | Technology                 |
+| ------------------ | -------------------------- |
+| Framework          | Next.js 15 (App Router)    |
+| Language           | TypeScript                 |
+| Styling            | Tailwind CSS v4            |
+| Components         | Shadcn UI                  |
+| Table Library      | TanStack Table             |
+| State Management   | Zustand                    |
+| WebSocket Client   | Reconnecting WebSocket     |
+| URL State Routing  | Nuqs                       |
+| Animations         | Motion                     |
+| Forms & Validation | Zod                        |
+| Icons              | Lucide React, Tabler Icons |
+| Lint & Format      | ESLint, Prettier           |
 
 ---
 
@@ -120,7 +124,7 @@ src/
 │   └── composition.ts        # Component composition utilities
 ├── types/
 transaction types
-│   ├── index.ts              
+│   ├── index.ts
 │   └── data-table.ts         # Table configuration types
 └── constants/
     └── data.ts               # Static data & configurations

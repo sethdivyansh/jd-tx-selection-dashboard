@@ -58,12 +58,18 @@ export const Modal: React.FC<ModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onChange}>
-      <DialogContent className={cn(sizeClasses[size], className)}>
-        <DialogHeader>
+      <DialogContent
+        className={cn(
+          sizeClasses[size],
+          'flex max-h-[90vh] flex-col overflow-hidden',
+          className
+        )}
+      >
+        <DialogHeader className='flex-shrink-0'>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        <div>{children}</div>
+        <div className='scrollbar-hide flex-1 overflow-y-auto'>{children}</div>
       </DialogContent>
     </Dialog>
   );

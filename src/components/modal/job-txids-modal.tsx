@@ -1,16 +1,90 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { Modal } from '@/components/ui/modal';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip';
 import { useJobTxids } from '@/hooks/use-job-history';
-import { Copy, Download, Hash } from 'lucide-react';
+import { Copy, Download, Hash, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 import { copyTxidsList, downloadCSV } from '@/lib/utils';
+
+// Component for individual txid row with tooltip and actions
+const TxidRow: React.FC<{ txid: string; index: number }> = ({
+  txid,
+  index
+}) => {
+  const copyTxid = async () => {
+    await navigator.clipboard.writeText(txid);
+    toast.success('TXID copied to clipboard');
+  };
+
+  const handleExternalLink = () => {
+    window.open(
+      `https://mempool.space/tx/${txid}`,
+      '_blank',
+      'noopener,noreferrer'
+    );
+  };
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className='hover:bg-muted group flex cursor-pointer items-center justify-between rounded-md p-2 transition-colors'>
+            <div className='flex items-center gap-2' onClick={copyTxid}>
+              <Badge variant='secondary' className='text-xs'>
+                {index + 1}
+              </Badge>
+              <code className='bg-muted rounded px-2 py-1 font-mono text-sm transition-colors hover:text-blue-600'>
+                {txid}
+              </code>
+            </div>
+            <div className='flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100'>
+              <Button
+                variant='ghost'
+                size='sm'
+                onClick={copyTxid}
+                className='h-6 w-6 p-0'
+                title='Copy transaction ID'
+              >
+                <Copy className='h-3 w-3' />
+              </Button>
+              <Button
+                variant='ghost'
+                size='sm'
+                onClick={handleExternalLink}
+                className='h-6 w-6 p-0'
+                title='View on mempool.space'
+              >
+                <ExternalLink className='h-3 w-3' />
+              </Button>
+            </div>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side='left' className='max-w-xs break-all'>
+          <div className='space-y-1 text-xs'>
+            <div>
+              <strong>Transaction ID #{index + 1}</strong>
+            </div>
+            <div className='font-mono'>{txid}</div>
+            <div className='mt-2 text-xs text-gray-400'>
+              Click to copy • Use icons for actions
+            </div>
+          </div>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
 
 interface JobTxidsModalProps {
   isOpen: boolean;
@@ -30,11 +104,6 @@ export function JobTxidsModal({
       await copyTxidsList(data.data.txids);
       toast.success(`${data.data.txids.length} TXIDs copied to clipboard`);
     }
-  };
-
-  const copyTxid = async (txid: string) => {
-    await navigator.clipboard.writeText(txid);
-    toast.success('TXID copied to clipboard');
   };
 
   const exportToCSV = async () => {
@@ -128,27 +197,7 @@ export function JobTxidsModal({
               <ScrollArea className='h-96 w-full rounded-md border'>
                 <div className='space-y-2 p-4'>
                   {data.data.txids.map((txid, index) => (
-                    <div
-                      key={txid}
-                      className='hover:bg-muted flex items-center justify-between rounded-md p-2 transition-colors'
-                    >
-                      <div className='flex items-center gap-2'>
-                        <Badge variant='secondary' className='text-xs'>
-                          {index + 1}
-                        </Badge>
-                        <code className='bg-muted rounded px-2 py-1 font-mono text-sm'>
-                          {txid}
-                        </code>
-                      </div>
-                      <Button
-                        variant='ghost'
-                        size='sm'
-                        onClick={() => copyTxid(txid)}
-                        className='ml-2'
-                      >
-                        <Copy className='h-3 w-3' />
-                      </Button>
-                    </div>
+                    <TxidRow key={txid} txid={txid} index={index} />
                   ))}
                 </div>
               </ScrollArea>

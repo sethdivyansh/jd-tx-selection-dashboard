@@ -51,8 +51,8 @@ export interface MempoolTransaction {
   wtxid: String;
   fees: Fee;
   feeRate: number;
-  depends: String[];
-  spent_by: String[];
+  depends: string[];
+  spent_by: string[];
   bip125_replaceable: boolean;
   unbroadcast: boolean;
 }
@@ -163,3 +163,76 @@ export interface LogEntry {
   level: 'INFO' | 'DEBUG' | 'WARNING' | 'ERROR';
   message: string;
 }
+
+// Auto-selection criteria types
+export type SelectionStrategy =
+  | 'maximizeFees'
+  | 'maximizeCount'
+  | 'balanced'
+  | 'compact'
+  | 'maxCapacity'
+  | 'prioritizeSmallTransactions'; // Keep backward compatibility
+
+export interface AutoSelectionCriteria {
+  enabled: boolean;
+  selectionStrategy: SelectionStrategy;
+  minFeeRate: number;
+  maxSize: number;
+  minBaseFee: number;
+  maxAncestorCount: number;
+  maxDescendantCount: number;
+  excludeBip125Replaceable: boolean;
+  excludeUnbroadcast: boolean;
+  maxTransactionCount: number;
+  requireTemplate: boolean; // Whether auto-selection requires a template
+  clearExistingSelections: boolean; // Whether to clear existing selections when auto-selection runs
+  periodicEnabled: boolean; // Whether to run auto-selection periodically
+  periodicInterval: number; // Interval in seconds for periodic auto-selection
+  autoJobDeclaration: boolean; // Whether to automatically declare jobs after auto-selection
+}
+
+export interface AppSettings {
+  autoSelection: {
+    onNewTemplate: AutoSelectionCriteria;
+  };
+  general: {
+    autoScrollToTable: boolean;
+    showNotifications: boolean;
+    pauseOnSelection: boolean;
+    clearSelectionOnJobDeclaration: boolean;
+    autoCleanInvalidTransactions: boolean;
+  };
+}
+
+export interface ApiSettings {
+  id: number;
+  created_at: string;
+  updated_at: string;
+  // Auto-selection settings
+  auto_selection_enabled: boolean;
+  selection_strategy: string;
+  min_fee_rate: number;
+  max_size: number;
+  min_base_fee: number;
+  max_ancestor_count: number;
+  max_descendant_count: number;
+  exclude_bip125_replaceable: boolean;
+  exclude_unbroadcast: boolean;
+  max_transaction_count: number;
+  require_template: boolean;
+  clear_existing_selections: boolean;
+  periodic_enabled: boolean;
+  periodic_interval: number;
+  auto_job_declaration: boolean;
+  // General settings
+  auto_scroll_to_table: boolean;
+  show_notifications: boolean;
+  pause_on_selection: boolean;
+  clear_selection_on_job_declaration: boolean;
+  auto_clean_invalid_transactions: boolean;
+}
+
+// Partial update type for API
+export type ApiSettingsUpdate = Partial<
+  Omit<ApiSettings, 'id' | 'created_at' | 'updated_at'>
+>;

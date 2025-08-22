@@ -22,6 +22,7 @@ export function Transactions() {
         data={filtered}
         isFetching={isFetching}
         onToggle={toggle}
+        showAutoSelectionControls={true}
       />
     </div>
   );
