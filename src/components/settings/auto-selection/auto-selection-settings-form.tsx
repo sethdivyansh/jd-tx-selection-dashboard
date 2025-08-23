@@ -38,16 +38,6 @@ const SELECTION_STRATEGIES: {
     value: 'balanced',
     label: 'Balanced',
     description: 'Balanced approach between fees and count'
-  },
-  {
-    value: 'compact',
-    label: 'Compact',
-    description: 'Efficient fee/weight ratio selection'
-  },
-  {
-    value: 'maxCapacity',
-    label: 'Max Capacity',
-    description: 'Fill maximum block capacity'
   }
 ];
 

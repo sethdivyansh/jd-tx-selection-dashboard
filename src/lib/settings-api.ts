@@ -9,19 +9,13 @@ import type {
 const STRATEGY_TO_API: Record<SelectionStrategy, string> = {
   maximizeFees: 'maximizeFees',
   maximizeCount: 'maximize_count',
-  balanced: 'balanced',
-  compact: 'compact',
-  maxCapacity: 'max_capacity',
-  prioritizeSmallTransactions: 'prioritize_small_transactions'
+  balanced: 'balanced'
 };
 
 const STRATEGY_FROM_API: Record<string, SelectionStrategy> = {
   maximizeFees: 'maximizeFees',
   maximize_count: 'maximizeCount',
-  balanced: 'balanced',
-  compact: 'compact',
-  max_capacity: 'maxCapacity',
-  prioritize_small_transactions: 'prioritizeSmallTransactions'
+  balanced: 'balanced'
 };
 
 const mapStrategyToApi = (strategy: SelectionStrategy): string => {

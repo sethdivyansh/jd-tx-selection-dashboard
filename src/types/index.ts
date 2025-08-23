@@ -165,13 +165,7 @@ export interface LogEntry {
 }
 
 // Auto-selection criteria types
-export type SelectionStrategy =
-  | 'maximizeFees'
-  | 'maximizeCount'
-  | 'balanced'
-  | 'compact'
-  | 'maxCapacity'
-  | 'prioritizeSmallTransactions'; // Keep backward compatibility
+export type SelectionStrategy = 'maximizeFees' | 'maximizeCount' | 'balanced';
 
 export interface AutoSelectionCriteria {
   enabled: boolean;
